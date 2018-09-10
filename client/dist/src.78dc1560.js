@@ -20934,7 +20934,82 @@ if ('development' === 'production') {
 } else {
   module.exports = require('./cjs/react-dom.development.js');
 }
-},{"./cjs/react-dom.development.js":"..\\node_modules\\react-dom\\cjs\\react-dom.development.js"}],"App.js":[function(require,module,exports) {
+},{"./cjs/react-dom.development.js":"..\\node_modules\\react-dom\\cjs\\react-dom.development.js"}],"components\\User.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var api = "http://localhost:1337/api/https://blockchain.info/rawaddr/3Ed62sPENkraPwpovPty9YMFGJ8FtTyv63?offset=0";
+
+var User = function (_Component) {
+  _inherits(User, _Component);
+
+  function User() {
+    var _ref;
+
+    var _temp, _this, _ret;
+
+    _classCallCheck(this, User);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = User.__proto__ || Object.getPrototypeOf(User)).call.apply(_ref, [this].concat(args))), _this), _this.initialState = { data: null }, _this.state = _this.initialState, _temp), _possibleConstructorReturn(_this, _ret);
+  }
+
+  _createClass(User, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      fetch(api, {
+        method: "GET",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest"
+        }
+      }).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        return _this2.setState({ data: json });
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react2.default.createElement(
+        "pre",
+        null,
+        _react2.default.createElement(
+          "code",
+          null,
+          JSON.stringify(this.state, null, 2)
+        )
+      );
+    }
+  }]);
+
+  return User;
+}(_react.Component);
+
+exports.default = User;
+},{"react":"..\\node_modules\\react\\index.js"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20945,14 +21020,18 @@ var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
+var _User = require("./components/User");
+
+var _User2 = _interopRequireDefault(_User);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function App() {
-  return "lol";
+  return _react2.default.createElement(_User2.default, null);
 }
 
 exports.default = App;
-},{"react":"..\\node_modules\\react\\index.js"}],"index.js":[function(require,module,exports) {
+},{"react":"..\\node_modules\\react\\index.js","./components/User":"components\\User.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = require("react");
@@ -20999,7 +21078,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '64738' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '58845' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
