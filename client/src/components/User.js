@@ -1,29 +1,49 @@
 import React, { Component } from "react";
-
-const api =
-  "http://localhost:1337/api/https://blockchain.info/rawaddr/3Ed62sPENkraPwpovPty9YMFGJ8FtTyv63?offset=0";
+import * as api from "../utils/api";
 
 class User extends Component {
-  initialState = { data: null };
+  initialState = {
+    user: null,
+    n_tx: undefined,
+    final_balance: undefined,
+    txs: [],
+    loading: false,
+    page: 1,
+    error: null
+  };
   state = this.initialState;
-
-  componentDidMount() {
-    fetch(api, {
-      method: "GET",
-      headers: {
-        "X-Requested-With": "XMLHttpRequest"
-      }
-    })
-      .then(response => response.json())
-      .then(json => this.setState({ data: json }));
+  reset(overrides) {
+    const newState = { ...this.initialState, ...overrides };
+    this.setState(newState);
+    return newState;
   }
-
-  render() {
-    return (
-      <pre>
-        <code>{JSON.stringify(this.state, null, 2)}</code>
-      </pre>
+  componentDidMount() {
+    if (this.props.match && this.props.match.params.id) {
+      this.fetchUser(this.props.match.params.id, this.state.page - 1);
+    }
+  }
+  componentDidUpdate(prevProps) {
+    if (this.props.match !== prevProps.match) {
+      if (this.props.match.params.id)
+        this.fetchUser(this.props.match.params.id, this.state.page - 1);
+    }
+  }
+  fetchUser = (...args) => {
+    this.reset({ loading: true });
+    return api.user(...args).then(
+      ({ n_tx, final_balance, txs, address }) => {
+        this.reset({ n_tx, final_balance, txs, user: address });
+      },
+      error => {
+        this.reset({ error });
+      }
     );
+  };
+  render() {
+    return this.props.children({
+      ...this.state,
+      fetchUser: this.fetchUser
+    });
   }
 }
 
