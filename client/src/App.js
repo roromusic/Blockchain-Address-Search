@@ -5,11 +5,15 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
+import { convertToUSD } from "./utils/helper";
 
 import User from "./components/User";
 import SearchBar from "./components/SearchBar";
 import Spinner from "./components/Spinner";
 import Transactions from "./components/Transactions";
+import Summary from "./components/Summary";
+import DisplayTransactions from "./components/DisplayTransactions";
+import Pagination from "./components/Pagination";
 
 function App() {
   return (
@@ -25,7 +29,8 @@ function App() {
               loading,
               page,
               error,
-              fetchUser
+              fetchUser,
+              changePage
             }) => (
               <React.Fragment>
                 <SearchBar fetchUser={fetchUser} />
@@ -34,12 +39,43 @@ function App() {
                   <pre>{JSON.stringify(error.statusText, null, 2)}</pre>
                 ) : null}
                 {user ? (
-                  <Transactions
-                    user={user}
-                    n_tx={n_tx}
-                    final_balance={final_balance}
-                    txs={txs}
-                  />
+                  <Transactions>
+                    <Transactions.Consumer>
+                      {({
+                        displaySatoshi,
+                        usd,
+                        toggleDetails,
+                        expanded,
+                        resetExpanded
+                      }) => (
+                        <React.Fragment>
+                          <Summary
+                            user={user}
+                            n_tx={n_tx}
+                            final_balance={
+                              displaySatoshi
+                                ? final_balance
+                                : convertToUSD(final_balance, usd)
+                            }
+                          />
+                          <DisplayTransactions
+                            txs={txs}
+                            user={user}
+                            displaySatoshi={displaySatoshi}
+                            usd={usd}
+                            toggleDetails={toggleDetails}
+                            expanded={expanded}
+                          />
+                          <Pagination
+                            page={page}
+                            n_tx={n_tx}
+                            changePage={changePage}
+                            resetExpanded={resetExpanded}
+                          />
+                        </React.Fragment>
+                      )}
+                    </Transactions.Consumer>
+                  </Transactions>
                 ) : null}
               </React.Fragment>
             )}

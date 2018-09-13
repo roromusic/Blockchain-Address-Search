@@ -25290,7 +25290,32 @@ exports.Switch = _Switch3.default;
 exports.generatePath = _generatePath3.default;
 exports.matchPath = _matchPath3.default;
 exports.withRouter = _withRouter3.default;
-},{"./BrowserRouter":"..\\node_modules\\react-router-dom\\es\\BrowserRouter.js","./HashRouter":"..\\node_modules\\react-router-dom\\es\\HashRouter.js","./Link":"..\\node_modules\\react-router-dom\\es\\Link.js","./MemoryRouter":"..\\node_modules\\react-router-dom\\es\\MemoryRouter.js","./NavLink":"..\\node_modules\\react-router-dom\\es\\NavLink.js","./Prompt":"..\\node_modules\\react-router-dom\\es\\Prompt.js","./Redirect":"..\\node_modules\\react-router-dom\\es\\Redirect.js","./Route":"..\\node_modules\\react-router-dom\\es\\Route.js","./Router":"..\\node_modules\\react-router-dom\\es\\Router.js","./StaticRouter":"..\\node_modules\\react-router-dom\\es\\StaticRouter.js","./Switch":"..\\node_modules\\react-router-dom\\es\\Switch.js","./generatePath":"..\\node_modules\\react-router-dom\\es\\generatePath.js","./matchPath":"..\\node_modules\\react-router-dom\\es\\matchPath.js","./withRouter":"..\\node_modules\\react-router-dom\\es\\withRouter.js"}],"utils\\api.js":[function(require,module,exports) {
+},{"./BrowserRouter":"..\\node_modules\\react-router-dom\\es\\BrowserRouter.js","./HashRouter":"..\\node_modules\\react-router-dom\\es\\HashRouter.js","./Link":"..\\node_modules\\react-router-dom\\es\\Link.js","./MemoryRouter":"..\\node_modules\\react-router-dom\\es\\MemoryRouter.js","./NavLink":"..\\node_modules\\react-router-dom\\es\\NavLink.js","./Prompt":"..\\node_modules\\react-router-dom\\es\\Prompt.js","./Redirect":"..\\node_modules\\react-router-dom\\es\\Redirect.js","./Route":"..\\node_modules\\react-router-dom\\es\\Route.js","./Router":"..\\node_modules\\react-router-dom\\es\\Router.js","./StaticRouter":"..\\node_modules\\react-router-dom\\es\\StaticRouter.js","./Switch":"..\\node_modules\\react-router-dom\\es\\Switch.js","./generatePath":"..\\node_modules\\react-router-dom\\es\\generatePath.js","./matchPath":"..\\node_modules\\react-router-dom\\es\\matchPath.js","./withRouter":"..\\node_modules\\react-router-dom\\es\\withRouter.js"}],"utils\\helper.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+function convertToUSD(satoshi, usd) {
+  var num = satoshi / 100000000 * usd;
+  return "$ " + num.toFixed(2);
+}
+
+function getSum(inputs, outputs, user) {
+  var sum = 0;
+  inputs.forEach(function (input) {
+    if (input.addr === user) sum -= input.value;
+  });
+  outputs.forEach(function (output) {
+    if (output.addr === user) sum += output.value;
+  });
+
+  return sum;
+}
+
+exports.convertToUSD = convertToUSD;
+exports.getSum = getSum;
+},{}],"utils\\api.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25376,7 +25401,47 @@ var User = function (_Component) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = User.__proto__ || Object.getPrototypeOf(User)).call.apply(_ref, [this].concat(args))), _this), _initialiseProps.call(_this), _temp), _possibleConstructorReturn(_this, _ret);
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = User.__proto__ || Object.getPrototypeOf(User)).call.apply(_ref, [this].concat(args))), _this), _this.initialState = {
+      user: null,
+      n_tx: undefined,
+      final_balance: undefined,
+      txs: [],
+      loading: false,
+      page: 1,
+      error: null
+    }, _this.state = _this.initialState, _this.timeOut = null, _this.fetchUser = function (id, offset) {
+      var stale = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      !stale && _this.setState({ loading: true });
+      return api.user(id, offset).then(function (_ref2) {
+        var n_tx = _ref2.n_tx,
+            final_balance = _ref2.final_balance,
+            txs = _ref2.txs,
+            address = _ref2.address;
+
+        _this.reset({
+          n_tx: n_tx,
+          final_balance: final_balance,
+          txs: txs,
+          user: address,
+          page: offset + 1
+        });
+        _this.timeOut = setTimeout(function () {
+          _this.fetchUser(_this.state.user, _this.state.page - 1, true);
+          console.log("refetched");
+        }, 10000);
+      }, function (error) {
+        clearTimeout(_this.timeOut);
+        _this.reset({ error: error });
+      });
+    }, _this.changePage = function (page) {
+      if (page === _this.state.page) return;
+
+      clearTimeout(_this.timeOut);
+      _this.setState({ page: page }, function () {
+        return _this.fetchUser(_this.state.user, page - 1);
+      });
+    }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
   _createClass(User, [{
@@ -25397,49 +25462,27 @@ var User = function (_Component) {
     key: "componentDidUpdate",
     value: function componentDidUpdate(prevProps) {
       if (this.props.match !== prevProps.match) {
+        clearTimeout(this.timeOut);
         if (this.props.match.params.id) this.fetchUser(this.props.match.params.id, this.state.page - 1);
       }
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      clearTimeout(this.timeOut);
     }
   }, {
     key: "render",
     value: function render() {
       return this.props.children(_extends({}, this.state, {
-        fetchUser: this.fetchUser
+        fetchUser: this.fetchUser,
+        changePage: this.changePage
       }));
     }
   }]);
 
   return User;
 }(_react.Component);
-
-var _initialiseProps = function _initialiseProps() {
-  var _this2 = this;
-
-  this.initialState = {
-    user: null,
-    n_tx: undefined,
-    final_balance: undefined,
-    txs: [],
-    loading: false,
-    page: 1,
-    error: null
-  };
-  this.state = this.initialState;
-
-  this.fetchUser = function () {
-    _this2.reset({ loading: true });
-    return api.user.apply(api, arguments).then(function (_ref2) {
-      var n_tx = _ref2.n_tx,
-          final_balance = _ref2.final_balance,
-          txs = _ref2.txs,
-          address = _ref2.address;
-
-      _this2.reset({ n_tx: n_tx, final_balance: final_balance, txs: txs, user: address });
-    }, function (error) {
-      _this2.reset({ error: error });
-    });
-  };
-};
 
 exports.default = User;
 },{"react":"..\\node_modules\\react\\index.js","../utils/api":"utils\\api.js"}],"utils\\history.js":[function(require,module,exports) {
@@ -27370,39 +27413,12 @@ var Spinner = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Spinner;
-},{"react":"..\\node_modules\\react\\index.js","react-emotion":"..\\node_modules\\react-emotion\\dist\\index.esm.js","react-dom":"..\\node_modules\\react-dom\\index.js"}],"utils\\helper.js":[function(require,module,exports) {
+},{"react":"..\\node_modules\\react\\index.js","react-emotion":"..\\node_modules\\react-emotion\\dist\\index.esm.js","react-dom":"..\\node_modules\\react-dom\\index.js"}],"components\\Transactions.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-function convertToUSD(satoshi, usd) {
-  var num = satoshi / 100000000 * usd;
-  return "$ " + num.toFixed(2);
-}
-
-function getSum(inputs, outputs, user) {
-  var sum = 0;
-  inputs.forEach(function (input) {
-    if (input.addr === user) sum -= input.value;
-  });
-  outputs.forEach(function (output) {
-    if (output.addr === user) sum += output.value;
-  });
-
-  return sum;
-}
-
-exports.convertToUSD = convertToUSD;
-exports.getSum = getSum;
-},{}],"components\\Transactions.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -27418,8 +27434,6 @@ var _api = require("../utils/api");
 
 var api = _interopRequireWildcard(_api);
 
-var _helper = require("../utils/helper");
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -27429,6 +27443,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TransactionsContext = _react2.default.createContext({
+  displaySatoshi: false,
+  usd: null,
+  expanded: [],
+  toggleDetails: function toggleDetails() {},
+  resetExpanded: function resetExpanded() {}
+});
 
 var Transactions = function (_React$Component) {
   _inherits(Transactions, _React$Component);
@@ -27444,29 +27466,35 @@ var Transactions = function (_React$Component) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Transactions.__proto__ || Object.getPrototypeOf(Transactions)).call.apply(_ref, [this].concat(args))), _this), _this.initialState = { displaySatoshi: false, usd: null, expanded: [] }, _this.state = _this.initialState, _this.toggleCurrency = function () {
-      _this.setState({ displaySatoshi: !_this.state.displaySatoshi });
-    }, _this.toggleDetails = function (id) {
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Transactions.__proto__ || Object.getPrototypeOf(Transactions)).call.apply(_ref, [this].concat(args))), _this), _this.toggleDetails = function (id) {
       var expanded = _this.state.expanded.concat();
       if (expanded.includes(id)) expanded = expanded.filter(function (item) {
         return item !== id;
       });else expanded.push(id);
       console.log(expanded);
       _this.setState({ expanded: expanded });
+    }, _this.resetExpanded = function () {
+      _this.setState({ expanded: [] });
+    }, _this.initialState = {
+      displaySatoshi: false,
+      usd: null,
+      expanded: [],
+      toggleDetails: _this.toggleDetails,
+      resetExpanded: _this.resetExpanded
+    }, _this.state = _this.initialState, _this.timeOut = null, _this.toggleCurrency = function () {
+      _this.setState({ displaySatoshi: !_this.state.displaySatoshi });
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
   _createClass(Transactions, [{
-    key: "reset",
-    value: function reset(overrides) {
-      var newState = _extends({}, this.initialState, overrides);
-      this.setState(newState);
-      return newState;
-    }
-  }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       this.fetchUSD();
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      clearTimeout(this.timeOut);
     }
   }, {
     key: "fetchUSD",
@@ -27476,35 +27504,36 @@ var Transactions = function (_React$Component) {
       api.usd().then(function (usd) {
         _this2.setState({ usd: usd });
       });
+
+      this.timeOut = setTimeout(function () {
+        _this2.fetchUSD();
+        console.log("fetch usd");
+      }, 10000);
     }
   }, {
     key: "render",
     value: function render() {
       return _react2.default.createElement(
-        _react2.default.Fragment,
-        null,
-        _react2.default.createElement(CurrencyDisplay, {
-          displaySatoshi: this.state.displaySatoshi,
-          toggleCurrency: this.toggleCurrency
-        }),
-        _react2.default.createElement(Summary, {
-          user: this.props.user,
-          n_tx: this.props.n_tx,
-          final_balance: this.state.displaySatoshi ? this.props.final_balance : (0, _helper.convertToUSD)(this.props.final_balance, this.state.usd)
-        }),
-        _react2.default.createElement(DisplayTransactions, {
-          txs: this.props.txs,
-          user: this.props.user,
-          displaySatoshi: this.state.displaySatoshi,
-          usd: this.state.usd,
-          toggleDetails: this.toggleDetails
-        })
+        TransactionsContext.Provider,
+        { value: this.state },
+        _react2.default.createElement(
+          _react2.default.Fragment,
+          null,
+          _react2.default.createElement(CurrencyDisplay, {
+            displaySatoshi: this.state.displaySatoshi,
+            toggleCurrency: this.toggleCurrency
+          }),
+          this.props.children
+        )
       );
     }
   }]);
 
   return Transactions;
 }(_react2.default.Component);
+
+Transactions.Consumer = TransactionsContext.Consumer;
+
 
 var Currency = (0, _reactEmotion2.default)("div")({
   height: "42px",
@@ -27556,6 +27585,25 @@ function CurrencyDisplay(_ref2) {
     )
   );
 }
+
+exports.default = Transactions;
+},{"react":"..\\node_modules\\react\\index.js","react-emotion":"..\\node_modules\\react-emotion\\dist\\index.esm.js","../utils/api":"utils\\api.js"}],"components\\Summary.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactEmotion = require("react-emotion");
+
+var _reactEmotion2 = _interopRequireDefault(_reactEmotion);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var SummaryTable = (0, _reactEmotion2.default)("dl")({
   display: "grid",
   gridTemplateColumns: "auto 1fr",
@@ -27574,10 +27622,10 @@ var DD = (0, _reactEmotion2.default)("dd")({
   overflow: "hidden"
 });
 
-function Summary(_ref3) {
-  var user = _ref3.user,
-      n_tx = _ref3.n_tx,
-      final_balance = _ref3.final_balance;
+function Summary(_ref) {
+  var user = _ref.user,
+      n_tx = _ref.n_tx,
+      final_balance = _ref.final_balance;
 
   return _react2.default.createElement(
     _react2.default.Fragment,
@@ -27624,38 +27672,238 @@ function Summary(_ref3) {
   );
 }
 
-var TransactionsWrapper = (0, _reactEmotion2.default)("div")({
-  width: "100%"
+exports.default = Summary;
+},{"react":"..\\node_modules\\react\\index.js","react-emotion":"..\\node_modules\\react-emotion\\dist\\index.esm.js"}],"components\\TransactionDetails.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
 
-var TransactionItem = (0, _reactEmotion2.default)("div")({
-  cursor: "pointer",
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactEmotion = require("react-emotion");
+
+var _reactEmotion2 = _interopRequireDefault(_reactEmotion);
+
+var _helper = require("../utils/helper");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function TransactionDetails(_ref) {
+  var inputs = _ref.inputs,
+      outputs = _ref.outputs,
+      weight = _ref.weight,
+      size = _ref.size,
+      usd = _ref.usd,
+      displaySatoshi = _ref.displaySatoshi;
+
+  var totalInput = 0;
+  var totalOutput = 0;
+
+  return _react2.default.createElement(
+    Details,
+    null,
+    _react2.default.createElement(
+      IOContainer,
+      null,
+      _react2.default.createElement(
+        IO,
+        null,
+        _react2.default.createElement(
+          "h3",
+          null,
+          "Inputs"
+        ),
+        _react2.default.createElement(
+          IOList,
+          null,
+          inputs.map(function (input, index) {
+            totalInput += input.value;
+
+            return _react2.default.createElement(
+              IOItem,
+              { key: index + input.value + input.addr },
+              _react2.default.createElement(
+                "div",
+                null,
+                input.addr
+              ),
+              _react2.default.createElement(
+                IOValue,
+                null,
+                displaySatoshi ? input.value : (0, _helper.convertToUSD)(input.value, usd)
+              )
+            );
+          })
+        ),
+        _react2.default.createElement(
+          "div",
+          null,
+          "Input Total: " + (displaySatoshi ? totalInput : (0, _helper.convertToUSD)(totalInput, usd))
+        )
+      ),
+      _react2.default.createElement(
+        IO,
+        null,
+        _react2.default.createElement(
+          "h3",
+          null,
+          "Outputs"
+        ),
+        _react2.default.createElement(
+          IOList,
+          null,
+          outputs.map(function (output, index) {
+            totalOutput += output.value;
+
+            return _react2.default.createElement(
+              IOItem,
+              { key: index + output.value + output.addr },
+              _react2.default.createElement(
+                "div",
+                null,
+                output.addr
+              ),
+              _react2.default.createElement(
+                IOValue,
+                null,
+                displaySatoshi ? output.value : (0, _helper.convertToUSD)(output.value, usd)
+              )
+            );
+          })
+        ),
+        _react2.default.createElement(
+          "div",
+          null,
+          "Output Total: " + (displaySatoshi ? totalOutput : (0, _helper.convertToUSD)(totalOutput, usd))
+        )
+      )
+    ),
+    _react2.default.createElement(
+      Misc,
+      null,
+      _react2.default.createElement(
+        "h3",
+        null,
+        "Details"
+      ),
+      _react2.default.createElement(
+        Table,
+        null,
+        _react2.default.createElement(
+          DT,
+          null,
+          "Fees"
+        ),
+        _react2.default.createElement(
+          DD,
+          null,
+          displaySatoshi ? totalInput - totalOutput : (0, _helper.convertToUSD)(totalInput - totalOutput, usd)
+        ),
+        _react2.default.createElement(
+          DT,
+          null,
+          "Size"
+        ),
+        _react2.default.createElement(
+          DD,
+          null,
+          size
+        ),
+        _react2.default.createElement(
+          DT,
+          null,
+          "Weight"
+        ),
+        _react2.default.createElement(
+          DD,
+          null,
+          weight
+        )
+      )
+    )
+  );
+}
+
+var Details = (0, _reactEmotion2.default)("div")({
+  marginBottom: "15px",
+  backgroundColor: "var(--gray)",
+  padding: "0 20px 20px 20px"
+});
+
+var IOContainer = (0, _reactEmotion2.default)("div")({
   display: "flex",
   justifyContent: "space-between",
-  padding: "5px",
-  marginTop: "5px"
+  flexWrap: "wrap"
 });
 
-var TransactionDate = (0, _reactEmotion2.default)("div")({ flex: "1" });
-var TransactionId = (0, _reactEmotion2.default)("div")({ flex: "1" });
-var TransactionSum = (0, _reactEmotion2.default)("div")(function (props) {
-  return {
-    flex: "1 0",
-    textAlign: "right",
-    color: props.sum > 0 ? "#1DB954" : "red"
-  };
+var IO = (0, _reactEmotion2.default)("div")({
+  flex: "1"
 });
 
-var Transaction = (0, _reactEmotion2.default)("li")({
-  listStyle: "none"
+var IOList = (0, _reactEmotion2.default)("ul")({
+  marginBottom: "20px"
 });
 
-function DisplayTransactions(_ref4) {
-  var txs = _ref4.txs,
-      user = _ref4.user,
-      displaySatoshi = _ref4.displaySatoshi,
-      usd = _ref4.usd,
-      toggleDetails = _ref4.toggleDetails;
+var IOItem = (0, _reactEmotion2.default)("li")({
+  display: "flex",
+  flexWrap: "wrap"
+});
+
+var IOValue = (0, _reactEmotion2.default)("div")({
+  marginLeft: "40px"
+});
+
+var Misc = (0, _reactEmotion2.default)("div")();
+
+var Table = (0, _reactEmotion2.default)("dl")({
+  display: "grid",
+  gridTemplateColumns: "auto 1fr",
+  gridGap: "5px"
+});
+
+var DT = (0, _reactEmotion2.default)("dt")({
+  gridColumn: 1
+});
+
+var DD = (0, _reactEmotion2.default)("dd")({
+  gridColumn: "2",
+  paddingLeft: "20px"
+});
+exports.default = TransactionDetails;
+},{"react":"..\\node_modules\\react\\index.js","react-emotion":"..\\node_modules\\react-emotion\\dist\\index.esm.js","../utils/helper":"utils\\helper.js"}],"components\\DisplayTransactions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactEmotion = require("react-emotion");
+
+var _reactEmotion2 = _interopRequireDefault(_reactEmotion);
+
+var _helper = require("../utils/helper");
+
+var _TransactionDetails = require("./TransactionDetails");
+
+var _TransactionDetails2 = _interopRequireDefault(_TransactionDetails);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DisplayTransactions(_ref) {
+  var txs = _ref.txs,
+      user = _ref.user,
+      displaySatoshi = _ref.displaySatoshi,
+      usd = _ref.usd,
+      toggleDetails = _ref.toggleDetails,
+      expanded = _ref.expanded;
 
   return _react2.default.createElement(
     TransactionsWrapper,
@@ -27710,30 +27958,192 @@ function DisplayTransactions(_ref4) {
           )
         );
 
-        // const details = (
-        //   <TransactionDetails
-        //     txID={tx.tx_index}
-        //     inputs={inputs}
-        //     outputs={outputs}
-        //     weight={tx.weight}
-        //     size={tx.size}
-        //     displaySatoshi={this.state.displaySatoshi}
-        //     expanded={this.state.expanded}
-        //     toUSD={this.convertToUSD}
-        //   />
-        // );
+        var details = _react2.default.createElement(_TransactionDetails2.default, {
+          inputs: inputs,
+          outputs: outputs,
+          weight: tx.weight,
+          size: tx.size,
+          displaySatoshi: displaySatoshi,
+          expanded: expanded,
+          usd: usd
+        });
 
         return _react2.default.createElement(
           Transaction,
           { key: tx.tx_index /*details={details}*/ },
-          item
+          item,
+          expanded.includes(tx.tx_index) && details
         );
       })
     )
   );
 }
-exports.default = Transactions;
-},{"react":"..\\node_modules\\react\\index.js","react-emotion":"..\\node_modules\\react-emotion\\dist\\index.esm.js","../utils/api":"utils\\api.js","../utils/helper":"utils\\helper.js"}],"App.js":[function(require,module,exports) {
+
+var TransactionsWrapper = (0, _reactEmotion2.default)("div")({
+  width: "100%"
+});
+
+var TransactionItem = (0, _reactEmotion2.default)("div")({
+  cursor: "pointer",
+  display: "flex",
+  justifyContent: "space-between",
+  padding: "5px",
+  marginTop: "5px"
+});
+
+var TransactionDate = (0, _reactEmotion2.default)("div")({ flex: "1" });
+var TransactionId = (0, _reactEmotion2.default)("div")({ flex: "1" });
+var TransactionSum = (0, _reactEmotion2.default)("div")(function (props) {
+  return {
+    flex: "1 0",
+    textAlign: "right",
+    color: props.sum > 0 ? "#1DB954" : "red"
+  };
+});
+
+var Transaction = (0, _reactEmotion2.default)("li")({
+  listStyle: "none"
+});
+
+exports.default = DisplayTransactions;
+},{"react":"..\\node_modules\\react\\index.js","react-emotion":"..\\node_modules\\react-emotion\\dist\\index.esm.js","../utils/helper":"utils\\helper.js","./TransactionDetails":"components\\TransactionDetails.js"}],"components\\Pagination.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactEmotion = require("react-emotion");
+
+var _reactEmotion2 = _interopRequireDefault(_reactEmotion);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Pagination = function Pagination(_ref) {
+  var page = _ref.page,
+      n_tx = _ref.n_tx,
+      changePage = _ref.changePage,
+      resetExpanded = _ref.resetExpanded;
+
+  var last = Math.ceil(n_tx / 50);
+  var pages = void 0;
+
+  if (last < 10) {
+    pages = getPages(1, last);
+  } else {
+    if (page < 5) {
+      pages = getPages(1, 9);
+    } else if (page > last - 4) {
+      pages = getPages(last - 8, last);
+    } else {
+      pages = getPages(page - 4, page + 4);
+    }
+  }
+
+  function getPages(start, max) {
+    var pages = [];
+
+    var _loop = function _loop(i) {
+      pages.push(_react2.default.createElement(
+        PageButton,
+        {
+          key: i,
+          onClick: function onClick() {
+            resetExpanded();
+            changePage(i);
+          },
+          selected: i === page
+        },
+        i
+      ));
+    };
+
+    for (var i = start; i <= max; i++) {
+      _loop(i);
+    }
+
+    return pages;
+  }
+
+  return _react2.default.createElement(
+    Pages,
+    null,
+    _react2.default.createElement(
+      Buttons,
+      null,
+      _react2.default.createElement(
+        PageButton,
+        {
+          onClick: function onClick() {
+            resetExpanded();
+            changePage(page === 1 ? 1 : page - 1);
+          }
+        },
+        "Previous"
+      ),
+      page > 5 && _react2.default.createElement(
+        PageButton,
+        {
+          text: "1...",
+          onClick: function onClick() {
+            resetExpanded();
+            changePage(1);
+          }
+        },
+        "1..."
+      ),
+      pages,
+      page < last - 4 && _react2.default.createElement(
+        PageButton,
+        {
+          onClick: function onClick() {
+            resetExpanded();
+            changePage(last);
+          }
+        },
+        "..." + last
+      ),
+      _react2.default.createElement(
+        PageButton,
+        {
+          onClick: function onClick() {
+            resetExpanded();
+            changePage(page === last ? last : page + 1);
+          }
+        },
+        "Next"
+      )
+    )
+  );
+};
+
+var Pages = (0, _reactEmotion2.default)("div")({
+  margin: "20px"
+});
+var Buttons = (0, _reactEmotion2.default)("ul")({
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "center"
+});
+
+var PageButton = (0, _reactEmotion2.default)("li")(function (_ref2) {
+  var selected = _ref2.selected;
+  return {
+    border: "1px solid white",
+    margin: "0 5px",
+    padding: "5px",
+    borderRadius: "3px",
+    color: "white",
+    cursor: "pointer",
+    backgroundColor: selected ? "var(--green)" : null
+  };
+});
+exports.default = Pagination;
+},{"react":"..\\node_modules\\react\\index.js","react-emotion":"..\\node_modules\\react-emotion\\dist\\index.esm.js"}],"App.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27745,6 +28155,8 @@ var _react = require("react");
 var _react2 = _interopRequireDefault(_react);
 
 var _reactRouterDom = require("react-router-dom");
+
+var _helper = require("./utils/helper");
 
 var _User = require("./components/User");
 
@@ -27761,6 +28173,18 @@ var _Spinner2 = _interopRequireDefault(_Spinner);
 var _Transactions = require("./components/Transactions");
 
 var _Transactions2 = _interopRequireDefault(_Transactions);
+
+var _Summary = require("./components/Summary");
+
+var _Summary2 = _interopRequireDefault(_Summary);
+
+var _DisplayTransactions = require("./components/DisplayTransactions");
+
+var _DisplayTransactions2 = _interopRequireDefault(_DisplayTransactions);
+
+var _Pagination = require("./components/Pagination");
+
+var _Pagination2 = _interopRequireDefault(_Pagination);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27784,7 +28208,8 @@ function App() {
                 loading = _ref2.loading,
                 page = _ref2.page,
                 error = _ref2.error,
-                fetchUser = _ref2.fetchUser;
+                fetchUser = _ref2.fetchUser,
+                changePage = _ref2.changePage;
             return _react2.default.createElement(
               _react2.default.Fragment,
               null,
@@ -27795,12 +28220,44 @@ function App() {
                 null,
                 JSON.stringify(error.statusText, null, 2)
               ) : null,
-              user ? _react2.default.createElement(_Transactions2.default, {
-                user: user,
-                n_tx: n_tx,
-                final_balance: final_balance,
-                txs: txs
-              }) : null
+              user ? _react2.default.createElement(
+                _Transactions2.default,
+                null,
+                _react2.default.createElement(
+                  _Transactions2.default.Consumer,
+                  null,
+                  function (_ref3) {
+                    var displaySatoshi = _ref3.displaySatoshi,
+                        usd = _ref3.usd,
+                        toggleDetails = _ref3.toggleDetails,
+                        expanded = _ref3.expanded,
+                        resetExpanded = _ref3.resetExpanded;
+                    return _react2.default.createElement(
+                      _react2.default.Fragment,
+                      null,
+                      _react2.default.createElement(_Summary2.default, {
+                        user: user,
+                        n_tx: n_tx,
+                        final_balance: displaySatoshi ? final_balance : (0, _helper.convertToUSD)(final_balance, usd)
+                      }),
+                      _react2.default.createElement(_DisplayTransactions2.default, {
+                        txs: txs,
+                        user: user,
+                        displaySatoshi: displaySatoshi,
+                        usd: usd,
+                        toggleDetails: toggleDetails,
+                        expanded: expanded
+                      }),
+                      _react2.default.createElement(_Pagination2.default, {
+                        page: page,
+                        n_tx: n_tx,
+                        changePage: changePage,
+                        resetExpanded: resetExpanded
+                      })
+                    );
+                  }
+                )
+              ) : null
             );
           }
         );
@@ -27810,7 +28267,7 @@ function App() {
 }
 
 exports.default = App;
-},{"react":"..\\node_modules\\react\\index.js","react-router-dom":"..\\node_modules\\react-router-dom\\es\\index.js","./components/User":"components\\User.js","./components/SearchBar":"components\\SearchBar.js","./components/Spinner":"components\\Spinner.js","./components/Transactions":"components\\Transactions.js"}],"..\\node_modules\\parcel-bundler\\src\\builtins\\bundle-url.js":[function(require,module,exports) {
+},{"react":"..\\node_modules\\react\\index.js","react-router-dom":"..\\node_modules\\react-router-dom\\es\\index.js","./utils/helper":"utils\\helper.js","./components/User":"components\\User.js","./components/SearchBar":"components\\SearchBar.js","./components/Spinner":"components\\Spinner.js","./components/Transactions":"components\\Transactions.js","./components/Summary":"components\\Summary.js","./components/DisplayTransactions":"components\\DisplayTransactions.js","./components/Pagination":"components\\Pagination.js"}],"..\\node_modules\\parcel-bundler\\src\\builtins\\bundle-url.js":[function(require,module,exports) {
 var bundleURL = null;
 function getBundleURLCached() {
   if (!bundleURL) {
@@ -27925,7 +28382,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '51410' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '58091' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
