@@ -68,7 +68,8 @@ function DisplayTransactions({
 }
 
 const TransactionsWrapper = styled("div")({
-  width: "100%"
+  width: "100%",
+  margin: "40px 0"
 });
 
 const TransactionItem = styled("div")({
@@ -79,10 +80,9 @@ const TransactionItem = styled("div")({
   marginTop: "5px"
 });
 
-const TransactionDate = styled("div")({ flex: "1" });
-const TransactionId = styled("div")({ flex: "1" });
+const TransactionDate = styled("div")();
+const TransactionId = styled("div")({ flex: "1", textAlign: "center" });
 const TransactionSum = styled("div")(props => ({
-  flex: "1 0",
   textAlign: "right",
   color: props.sum > 0 ? "#1DB954" : "red"
 }));

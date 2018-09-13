@@ -17,7 +17,6 @@ class Transactions extends React.Component {
     let expanded = this.state.expanded.concat();
     if (expanded.includes(id)) expanded = expanded.filter(item => item !== id);
     else expanded.push(id);
-    console.log(expanded);
     this.setState({ expanded });
   };
   resetExpanded = () => {
@@ -53,24 +52,26 @@ class Transactions extends React.Component {
 
     this.timeOut = setTimeout(() => {
       this.fetchUSD();
-      console.log("fetch usd");
     }, 10000);
   }
 
   render() {
     return (
       <TransactionsContext.Provider value={this.state}>
-        <React.Fragment>
+        <TxWrapper>
           <CurrencyDisplay
             displaySatoshi={this.state.displaySatoshi}
             toggleCurrency={this.toggleCurrency}
           />
           {this.props.children}
-        </React.Fragment>
+        </TxWrapper>
       </TransactionsContext.Provider>
     );
   }
 }
+const TxWrapper = styled("div")({
+  padding: "20px"
+});
 
 const Currency = styled("div")({
   height: "42px",

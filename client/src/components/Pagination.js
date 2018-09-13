@@ -92,7 +92,7 @@ const Buttons = styled("ul")({
 
 const PageButton = styled("li")(({ selected }) => ({
   border: "1px solid white",
-  margin: "0 5px",
+  margin: "5px",
   padding: "5px",
   borderRadius: "3px",
   color: "white",

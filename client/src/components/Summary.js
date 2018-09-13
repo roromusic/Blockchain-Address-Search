@@ -6,7 +6,11 @@ const SummaryTable = styled("dl")({
   gridTemplateColumns: "auto 1fr",
   gridGap: "5px",
   margin: "1em",
-  lineHeight: "1.4"
+  lineHeight: "1.4",
+
+  "@media (max-width: 426px)": {
+    margin: "0"
+  }
 });
 
 const DT = styled("dt")({
@@ -16,7 +20,12 @@ const DT = styled("dt")({
 const DD = styled("dd")({
   gridColumn: "2",
   marginLeft: "40px",
-  overflow: "hidden"
+  overflow: "hidden",
+
+  "@media (max-width: 426px)": {
+    gridColumn: "1",
+    margin: "0 0 10px"
+  }
 });
 
 function Summary({ user, n_tx, final_balance }) {

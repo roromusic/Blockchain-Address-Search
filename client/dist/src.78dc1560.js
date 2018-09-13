@@ -27336,6 +27336,7 @@ var loaderAnim = {
 var SpinnerOuter = (0, _reactEmotion2.default)("div")({
   position: "fixed",
   top: "0",
+  left: "0",
   backgroundColor: "rgba(0,0,0,0.6)",
   display: "flex",
   justifyContent: "center",
@@ -27471,7 +27472,6 @@ var Transactions = function (_React$Component) {
       if (expanded.includes(id)) expanded = expanded.filter(function (item) {
         return item !== id;
       });else expanded.push(id);
-      console.log(expanded);
       _this.setState({ expanded: expanded });
     }, _this.resetExpanded = function () {
       _this.setState({ expanded: [] });
@@ -27507,7 +27507,6 @@ var Transactions = function (_React$Component) {
 
       this.timeOut = setTimeout(function () {
         _this2.fetchUSD();
-        console.log("fetch usd");
       }, 10000);
     }
   }, {
@@ -27517,7 +27516,7 @@ var Transactions = function (_React$Component) {
         TransactionsContext.Provider,
         { value: this.state },
         _react2.default.createElement(
-          _react2.default.Fragment,
+          TxWrapper,
           null,
           _react2.default.createElement(CurrencyDisplay, {
             displaySatoshi: this.state.displaySatoshi,
@@ -27534,6 +27533,9 @@ var Transactions = function (_React$Component) {
 
 Transactions.Consumer = TransactionsContext.Consumer;
 
+var TxWrapper = (0, _reactEmotion2.default)("div")({
+  padding: "20px"
+});
 
 var Currency = (0, _reactEmotion2.default)("div")({
   height: "42px",
@@ -27609,7 +27611,11 @@ var SummaryTable = (0, _reactEmotion2.default)("dl")({
   gridTemplateColumns: "auto 1fr",
   gridGap: "5px",
   margin: "1em",
-  lineHeight: "1.4"
+  lineHeight: "1.4",
+
+  "@media (max-width: 426px)": {
+    margin: "0"
+  }
 });
 
 var DT = (0, _reactEmotion2.default)("dt")({
@@ -27619,7 +27625,12 @@ var DT = (0, _reactEmotion2.default)("dt")({
 var DD = (0, _reactEmotion2.default)("dd")({
   gridColumn: "2",
   marginLeft: "40px",
-  overflow: "hidden"
+  overflow: "hidden",
+
+  "@media (max-width: 426px)": {
+    gridColumn: "1",
+    margin: "0 0 10px"
+  }
 });
 
 function Summary(_ref) {
@@ -27727,7 +27738,7 @@ function TransactionDetails(_ref) {
               IOItem,
               { key: index + input.value + input.addr },
               _react2.default.createElement(
-                "div",
+                IOAddr,
                 null,
                 input.addr
               ),
@@ -27763,7 +27774,7 @@ function TransactionDetails(_ref) {
               IOItem,
               { key: index + output.value + output.addr },
               _react2.default.createElement(
-                "div",
+                IOAddr,
                 null,
                 output.addr
               ),
@@ -27850,11 +27861,21 @@ var IOList = (0, _reactEmotion2.default)("ul")({
 
 var IOItem = (0, _reactEmotion2.default)("li")({
   display: "flex",
-  flexWrap: "wrap"
+  flexWrap: "wrap",
+  margin: "5px 0"
+});
+
+var IOAddr = (0, _reactEmotion2.default)("div")({
+  paddingRight: "20px",
+  marginBottom: "5px",
+
+  "@media (max-width: 426px)": {
+    fontSize: "14px"
+  }
 });
 
 var IOValue = (0, _reactEmotion2.default)("div")({
-  marginLeft: "40px"
+  marginRight: "20px"
 });
 
 var Misc = (0, _reactEmotion2.default)("div")();
@@ -27980,7 +28001,8 @@ function DisplayTransactions(_ref) {
 }
 
 var TransactionsWrapper = (0, _reactEmotion2.default)("div")({
-  width: "100%"
+  width: "100%",
+  margin: "40px 0"
 });
 
 var TransactionItem = (0, _reactEmotion2.default)("div")({
@@ -27991,11 +28013,10 @@ var TransactionItem = (0, _reactEmotion2.default)("div")({
   marginTop: "5px"
 });
 
-var TransactionDate = (0, _reactEmotion2.default)("div")({ flex: "1" });
-var TransactionId = (0, _reactEmotion2.default)("div")({ flex: "1" });
+var TransactionDate = (0, _reactEmotion2.default)("div")();
+var TransactionId = (0, _reactEmotion2.default)("div")({ flex: "1", textAlign: "center" });
 var TransactionSum = (0, _reactEmotion2.default)("div")(function (props) {
   return {
-    flex: "1 0",
     textAlign: "right",
     color: props.sum > 0 ? "#1DB954" : "red"
   };
@@ -28134,7 +28155,7 @@ var PageButton = (0, _reactEmotion2.default)("li")(function (_ref2) {
   var selected = _ref2.selected;
   return {
     border: "1px solid white",
-    margin: "0 5px",
+    margin: "5px",
     padding: "5px",
     borderRadius: "3px",
     color: "white",

@@ -24,7 +24,7 @@ function TransactionDetails({
 
               return (
                 <IOItem key={index + input.value + input.addr}>
-                  <div>{input.addr}</div>
+                  <IOAddr>{input.addr}</IOAddr>
                   <IOValue>
                     {displaySatoshi
                       ? input.value
@@ -46,7 +46,7 @@ function TransactionDetails({
 
               return (
                 <IOItem key={index + output.value + output.addr}>
-                  <div>{output.addr}</div>
+                  <IOAddr>{output.addr}</IOAddr>
                   <IOValue>
                     {displaySatoshi
                       ? output.value
@@ -104,11 +104,21 @@ const IOList = styled("ul")({
 
 const IOItem = styled("li")({
   display: "flex",
-  flexWrap: "wrap"
+  flexWrap: "wrap",
+  margin: "5px 0"
+});
+
+const IOAddr = styled("div")({
+  paddingRight: "20px",
+  marginBottom: "5px",
+
+  "@media (max-width: 426px)": {
+    fontSize: "14px"
+  }
 });
 
 const IOValue = styled("div")({
-  marginLeft: "40px"
+  marginRight: "20px"
 });
 
 const Misc = styled("div")();
