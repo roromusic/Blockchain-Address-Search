@@ -27939,11 +27939,15 @@ function DisplayTransactions(_ref) {
       null,
       txs.map(function (tx) {
         var inputs = tx.inputs.map(function (input) {
-          var _input$prev_out = input.prev_out,
-              addr = _input$prev_out.addr,
-              value = _input$prev_out.value;
+          if (input.prev_out) {
+            var _input$prev_out = input.prev_out,
+                addr = _input$prev_out.addr,
+                value = _input$prev_out.value;
 
-          return { addr: addr, value: value };
+            return { addr: addr, value: value };
+          } else {
+            return { addr: "Newly Mined", value: null };
+          }
         });
 
         var outputs = tx.out.map(function (output) {
@@ -28403,7 +28407,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '58091' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52853' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

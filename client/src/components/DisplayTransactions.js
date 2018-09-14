@@ -17,8 +17,12 @@ function DisplayTransactions({
       <ul>
         {txs.map(tx => {
           const inputs = tx.inputs.map(input => {
-            let { addr, value } = input.prev_out;
-            return { addr, value };
+            if (input.prev_out) {
+              let { addr, value } = input.prev_out;
+              return { addr, value };
+            } else {
+              return { addr: "Newly Mined", value: null };
+            }
           });
 
           const outputs = tx.out.map(output => {
