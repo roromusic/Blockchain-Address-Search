@@ -27928,11 +27928,7 @@ var LoadedTransactions = _reactLoadable2.default.Map({
     }
   },
   loading: function loading() {
-    return _react2.default.createElement(
-      "h1",
-      null,
-      "LOading"
-    );
+    return _react2.default.createElement(_Spinner2.default, null);
   },
   render: function render(loaded, props) {
     var Transactions = loaded.Transactions.default;
@@ -28098,7 +28094,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '64034' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '58639' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
