@@ -15,7 +15,7 @@ const LoadedTransactions = Loadable.Map({
     Pagination: () => import("./components/Pagination")
   },
   loading() {
-    return <h1>LOading</h1>;
+    return <Spinner />;
   },
   render(loaded, props) {
     let Transactions = loaded.Transactions.default;
