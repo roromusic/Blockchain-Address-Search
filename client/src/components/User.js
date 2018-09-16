@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import * as api from "../utils/api";
 
 class User extends Component {
@@ -46,7 +46,6 @@ class User extends Component {
         });
         this.timeOut = setTimeout(() => {
           this.fetchUser(this.state.user, this.state.page - 1, true);
-          console.log("refetched");
         }, 10000);
       },
       error => {
