@@ -27171,6 +27171,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require("react");
@@ -27215,34 +27217,34 @@ var Input = (0, _reactEmotion2.default)("input")({
 var SearchBar = function (_Component) {
   _inherits(SearchBar, _Component);
 
-  function SearchBar(props) {
+  function SearchBar() {
+    var _ref;
+
+    var _temp, _this, _ret;
+
     _classCallCheck(this, SearchBar);
 
-    var _this = _possibleConstructorReturn(this, (SearchBar.__proto__ || Object.getPrototypeOf(SearchBar)).call(this, props));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
 
-    _this.state = {
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = SearchBar.__proto__ || Object.getPrototypeOf(SearchBar)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
       input: ""
-    };
-    _this.handleChange = _this.handleChange.bind(_this);
-    _this.handleSubmit = _this.handleSubmit.bind(_this);
-    return _this;
+    }, _this.handleSubmit = function (e) {
+      e.preventDefault();
+      _history2.default.push("/users/" + _this.state.input);
+      _this.props.fetchUser(_this.state.input, 0);
+    }, _this.fetchGenesis = function () {
+      _history2.default.push("/users/1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa");
+      _this.props.fetchUser("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", 0);
+    }, _this.handleChange = function (e) {
+      _this.setState({
+        input: e.target.value
+      });
+    }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
   _createClass(SearchBar, [{
-    key: "handleSubmit",
-    value: function handleSubmit(e) {
-      e.preventDefault();
-      _history2.default.push("/users/" + this.state.input);
-      this.props.fetchUser(this.state.input, 0);
-    }
-  }, {
-    key: "handleChange",
-    value: function handleChange(e) {
-      this.setState({
-        input: e.target.value
-      });
-    }
-  }, {
     key: "render",
     value: function render() {
       return _react2.default.createElement(
@@ -27254,12 +27256,39 @@ var SearchBar = function (_Component) {
           color: "white"
         }),
         _react2.default.createElement(
-          "p",
+          "div",
           css({
-            fontSize: "0.8em",
-            marginBottom: "10px"
+            display: "flex",
+            justifyContent: "space-between"
           }),
-          "Search a Bitcoin Address"
+          _react2.default.createElement(
+            "p",
+            css({
+              fontSize: "0.8em",
+              marginBottom: "10px"
+            }),
+            "Search a Bitcoin Address"
+          ),
+          _react2.default.createElement(
+            "button",
+            _extends({}, css({
+              height: "20px",
+              border: "1px solid var(--green)",
+              backgroundColor: "transparent",
+              color: "var(--green)",
+              cursor: "pointer",
+              outline: "none",
+              borderRadius: "5px",
+              boxShadow: "var(--shadow)",
+              transition: "all 0.5s ease 0s",
+              ":hover": {
+                boxShadow: "var(--shadowHover)"
+              }
+            }), {
+              onClick: this.fetchGenesis
+            }),
+            "Genesis of Bitcoin"
+          )
         ),
         _react2.default.createElement(
           "form",
@@ -28407,7 +28436,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52853' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '63198' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

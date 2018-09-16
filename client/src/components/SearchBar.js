@@ -18,26 +18,26 @@ const Input = styled("input")({
 });
 
 class SearchBar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      input: ""
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  state = {
+    input: ""
+  };
 
-  handleSubmit(e) {
+  handleSubmit = e => {
     e.preventDefault();
     history.push(`/users/${this.state.input}`);
     this.props.fetchUser(this.state.input, 0);
-  }
+  };
 
-  handleChange(e) {
+  fetchGenesis = () => {
+    history.push(`/users/1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa`);
+    this.props.fetchUser("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", 0);
+  };
+
+  handleChange = e => {
     this.setState({
       input: e.target.value
     });
-  }
+  };
 
   render() {
     return (
@@ -49,14 +49,40 @@ class SearchBar extends Component {
           color: "white"
         })}
       >
-        <p
+        <div
           {...css({
-            fontSize: "0.8em",
-            marginBottom: "10px"
+            display: "flex",
+            justifyContent: "space-between"
           })}
         >
-          Search a Bitcoin Address
-        </p>
+          <p
+            {...css({
+              fontSize: "0.8em",
+              marginBottom: "10px"
+            })}
+          >
+            Search a Bitcoin Address
+          </p>
+          <button
+            {...css({
+              height: "20px",
+              border: "1px solid var(--green)",
+              backgroundColor: "transparent",
+              color: "var(--green)",
+              cursor: "pointer",
+              outline: "none",
+              borderRadius: "5px",
+              boxShadow: "var(--shadow)",
+              transition: "all 0.5s ease 0s",
+              ":hover": {
+                boxShadow: "var(--shadowHover)"
+              }
+            })}
+            onClick={this.fetchGenesis}
+          >
+            Genesis of Bitcoin
+          </button>
+        </div>
         <form onSubmit={this.handleSubmit}>
           <Input
             placeholder="account address"
