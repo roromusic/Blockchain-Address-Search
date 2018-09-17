@@ -4,9 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "jest --silent",
+    "test:coverage": "jest --coverage",
+    "test:update": "jest -u",
+    "test:watch": "jest --watch",
     "format": "prettier --write \"src/**/*.{js,jsx,css,json}\"",
     "lint": "eslint --fix \"**/*.{js, jsx}\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel src/index.html"
   },
   "repository": {
