@@ -23,6 +23,7 @@
     "babel-core": "^6.26.3",
     "babel-eslint": "^9.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
@@ -32,8 +33,10 @@
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-prettier": "^2.6.2",
     "eslint-plugin-react": "^7.11.1",
+    "jest": "^23.6.0",
     "parcel-bundler": "^1.9.7",
-    "prettier": "^1.14.2"
+    "prettier": "^1.14.2",
+    "react-test-renderer": "^16.5.1"
   },
   "dependencies": {
     "emotion": "^9.2.8",
