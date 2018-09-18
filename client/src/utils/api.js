@@ -1,4 +1,4 @@
-const userApi = "http://localhost:1337/api/https://blockchain.info/rawaddr/";
+const userApi = "/api/https://blockchain.info/rawaddr/";
 const usdApi = "https://blockchain.info/ticker";
 
 function user(id, offset) {

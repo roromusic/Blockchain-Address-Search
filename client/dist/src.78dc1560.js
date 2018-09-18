@@ -25655,7 +25655,7 @@ exports.getSum = getSum;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var userApi = "http://localhost:1337/api/https://blockchain.info/rawaddr/";
+var userApi = "/api/https://blockchain.info/rawaddr/";
 var usdApi = "https://blockchain.info/ticker";
 
 function user(id, offset) {
@@ -28094,7 +28094,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '58609' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '56009' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
