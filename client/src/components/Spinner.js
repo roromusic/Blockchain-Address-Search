@@ -2,8 +2,6 @@ import React from "react";
 import styled, { keyframes } from "react-emotion";
 import { createPortal } from "react-dom";
 
-const spinnerRoot = document.getElementById("modal");
-
 const smallBoxKeyframes = keyframes({
   "0%": {
     transform: "scale(0.2)"
@@ -86,14 +84,15 @@ class Spinner extends React.Component {
   constructor(props) {
     super(props);
     this.el = document.createElement("div");
+    this.spinnerRoot = document.getElementById("modal");
   }
 
   componentDidMount() {
-    spinnerRoot.appendChild(this.el);
+    this.spinnerRoot.appendChild(this.el);
   }
 
   componentWillUnmount() {
-    spinnerRoot.removeChild(this.el);
+    this.spinnerRoot.removeChild(this.el);
   }
 
   render() {
