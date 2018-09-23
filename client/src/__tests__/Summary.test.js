@@ -1,5 +1,5 @@
 import React from "react";
-import { render, cleanup, getAllByTestId } from "react-testing-library";
+import { render, cleanup } from "react-testing-library";
 import Summary from "../components/Summary";
 
 afterEach(cleanup);

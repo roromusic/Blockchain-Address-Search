@@ -1,6 +1,8 @@
 import React from "react";
-import styled from "react-emotion";
+import styled, { css as emoCSS } from "react-emotion";
 import * as api from "../utils/api";
+
+const css = (...args) => ({ className: emoCSS(...args) });
 
 const TransactionsContext = React.createContext({
   displaySatoshi: false,
@@ -89,13 +91,20 @@ const CurrencySwitch = styled("div")({
   cursor: "pointer"
 });
 
-const CurrencySelection = styled("div")(props => ({
-  height: "100%",
-  width: "25px",
-  backgroundColor: "var(--green)",
-  border: "2px solid black",
-  float: props.displaySatoshi ? "left" : "right"
-}));
+function CurrencySelection(props) {
+  return (
+    <div
+      data-testid="currency_selection"
+      {...css({
+        height: "100%",
+        width: "25px",
+        backgroundColor: "var(--green)",
+        border: "2px solid black",
+        float: props.displaySatoshi ? "left" : "right"
+      })}
+    />
+  );
+}
 
 function CurrencyDisplay({ displaySatoshi, toggleCurrency }) {
   return (
