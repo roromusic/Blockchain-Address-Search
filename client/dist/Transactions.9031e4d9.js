@@ -110,6 +110,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require("react");
@@ -133,6 +135,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var css = function css() {
+  return { className: _reactEmotion.css.apply(undefined, arguments) };
+};
 
 var TransactionsContext = _react2.default.createContext({
   displaySatoshi: false,
@@ -242,15 +248,17 @@ var CurrencySwitch = (0, _reactEmotion2.default)("div")({
   cursor: "pointer"
 });
 
-var CurrencySelection = (0, _reactEmotion2.default)("div")(function (props) {
-  return {
+function CurrencySelection(props) {
+  return _react2.default.createElement("div", _extends({
+    "data-testid": "currency_selection"
+  }, css({
     height: "100%",
     width: "25px",
     backgroundColor: "var(--green)",
     border: "2px solid black",
     float: props.displaySatoshi ? "left" : "right"
-  };
-});
+  })));
+}
 
 function CurrencyDisplay(_ref2) {
   var displaySatoshi = _ref2.displaySatoshi,
@@ -307,7 +315,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '56009' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '51480' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 

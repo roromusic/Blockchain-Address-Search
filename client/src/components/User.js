@@ -26,6 +26,10 @@ class User extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.match !== prevProps.match) {
       clearTimeout(this.timeOut);
+      if (!this.props.match) {
+        this.reset();
+        return;
+      }
       if (this.props.match.params.id)
         this.fetchUser(this.props.match.params.id, this.state.page - 1);
     }

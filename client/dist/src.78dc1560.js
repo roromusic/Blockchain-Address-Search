@@ -25792,6 +25792,10 @@ var User = function (_Component) {
     value: function componentDidUpdate(prevProps) {
       if (this.props.match !== prevProps.match) {
         clearTimeout(this.timeOut);
+        if (!this.props.match) {
+          this.reset();
+          return;
+        }
         if (this.props.match.params.id) this.fetchUser(this.props.match.params.id, this.state.page - 1);
       }
     }
@@ -27663,8 +27667,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var spinnerRoot = document.getElementById("modal");
-
 var smallBoxKeyframes = (0, _reactEmotion.keyframes)({
   "0%": {
     transform: "scale(0.2)"
@@ -27748,18 +27750,19 @@ var Spinner = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Spinner.__proto__ || Object.getPrototypeOf(Spinner)).call(this, props));
 
     _this.el = document.createElement("div");
+    _this.spinnerRoot = document.getElementById("modal");
     return _this;
   }
 
   _createClass(Spinner, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      spinnerRoot.appendChild(this.el);
+      this.spinnerRoot.appendChild(this.el);
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      spinnerRoot.removeChild(this.el);
+      this.spinnerRoot.removeChild(this.el);
     }
   }, {
     key: "render",
@@ -28094,7 +28097,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '56009' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '51480' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
